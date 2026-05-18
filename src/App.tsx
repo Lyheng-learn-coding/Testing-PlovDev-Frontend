@@ -3,6 +3,7 @@ import { BrowserRouter, useNavigate } from "react-router-dom";
 import AppRouter from "./routes/AppRouter";
 import { handleRefreshToken } from "./auth/services/auth.service";
 import { AuthProvider, useAuth } from "./auth/context/AuthContext";
+import { TooltipProvider } from "./components/ui/tooltip";
 
 const AppContent = () => {
   const { accessToken, setAccessToken, setIsLoading } = useAuth();
@@ -41,7 +42,9 @@ function App() {
     <>
       <BrowserRouter>
         <AuthProvider>
+        <TooltipProvider>
           <AppContent />
+        </TooltipProvider>
         </AuthProvider>
       </BrowserRouter>
     </>

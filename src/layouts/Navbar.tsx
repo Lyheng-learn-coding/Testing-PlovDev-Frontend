@@ -40,7 +40,7 @@ export default function Navbar() {
 
   return (
     <>
-      <nav className="bg-[#111111] px-16 h-16 flex items-center justify-between font-sans">
+      <nav className="bg-[#111111] px-16 h-16 flex items-center justify-between font-sans opacity-100 ">
         {/* Left: Nav Links */}
         <div className="flex items-center gap-8">
           {NAV_LINKS.map((link) => (
@@ -54,45 +54,55 @@ export default function Navbar() {
           ))}
         </div>
 
-        {/* Right: Search + Auth */}
-        <div className="flex items-center gap-3">
-          {/* Search */}
-          <div className="flex items-center gap-2 bg-[#222222] border border-[#333333] rounded-md px-3 py-1.5 w-52">
-            <svg
-              className="w-4 h-4 text-[#666666] shrink-0"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth={2}
-              viewBox="0 0 24 24"
-            >
-              <circle cx="11" cy="11" r="8" />
-              <path d="m21 21-4.35-4.35" />
-            </svg>
-            <input
-              type="text"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search courses..."
-              className="bg-transparent border-none outline-none text-[#aaaaaa] placeholder-[#555555] text-sm w-full"
-            />
+        <div className="flex items-center gap-5">
+          <div className="flex gap-5">
+            <Link className="text-[#cccccc] " to="/teacher">
+              Instructors
+            </Link>
+            <Link className="text-[#cccccc] " to="/student">
+              My Learning
+            </Link>
           </div>
+          {/* Right: Search + Auth */}
+          <div className="flex items-center gap-3">
+            {/* Search */}
+            <div className="flex items-center gap-2 bg-[#222222] border border-[#333333] rounded-md px-3 py-1.5 w-52">
+              <svg
+                className="w-4 h-4 text-[#666666] shrink-0"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={2}
+                viewBox="0 0 24 24"
+              >
+                <circle cx="11" cy="11" r="8" />
+                <path d="m21 21-4.35-4.35" />
+              </svg>
+              <input
+                type="text"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Search courses..."
+                className="bg-transparent border-none outline-none text-[#aaaaaa] placeholder-[#555555] text-sm w-full"
+              />
+            </div>
 
-          {/* Sign In */}
-          {accessToken ? (
-            <button
-              onClick={handleLogOut}
-              className="bg-[#00d4c8] hover:opacity-85 text-black text-sm font-medium px-4 py-2 rounded-md transition-opacity duration-200"
-            >
-              Sign Out
-            </button>
-          ) : (
-            <button
-              onClick={() => navigate("/authpage")}
-              className="bg-[#00d4c8] hover:opacity-85 text-black text-sm font-medium px-4 py-2 rounded-md transition-opacity duration-200"
-            >
-              Sign In
-            </button>
-          )}
+            {/* Sign In */}
+            {accessToken ? (
+              <button
+                onClick={handleLogOut}
+                className="bg-[#00d4c8] hover:opacity-85 text-black text-sm font-medium px-4 py-2 rounded-md transition-opacity duration-200"
+              >
+                Sign Out
+              </button>
+            ) : (
+              <button
+                onClick={() => navigate("/authpage")}
+                className="bg-[#00d4c8] hover:opacity-85 text-black text-sm font-medium px-4 py-2 rounded-md transition-opacity duration-200"
+              >
+                Sign In
+              </button>
+            )}
+          </div>
         </div>
       </nav>
       <Outlet />

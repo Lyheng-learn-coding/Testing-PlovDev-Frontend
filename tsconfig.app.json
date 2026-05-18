@@ -19,7 +19,15 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "erasableSyntaxOnly": true,
-    "noFallthroughCasesInSwitch": true
-  },
+    "noFallthroughCasesInSwitch": true,
+
+    /* shadcn path mapping */
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]    
+    },
+    /* Silences the TypeScript 6.0+ baseUrl deprecation warning */
+    "ignoreDeprecations": "6.0"
+  },  
   "include": ["src"]
 }
