@@ -17,6 +17,9 @@ const publicRoutes = [
 
 const teacherRoutes = [
   { path: 'create-course', element: <CreateCoursePage /> },
+  { path: 'create-course/:id', element: <CreateCoursePage /> },
+  { path: 'my-course/create-course', element: <CreateCoursePage /> },
+  { path: 'my-course/create-course/:id', element: <CreateCoursePage /> },
   { path: 'my-course', element: <MyCoursePage /> },
 ]
 

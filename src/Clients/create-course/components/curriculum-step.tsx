@@ -94,14 +94,39 @@ function getFileNameWithoutExtension(fileName: string) {
   return parts.join(".") || fileName;
 }
 
+function readNumericId(value: unknown): number | null {
+  if (typeof value === "number" && Number.isFinite(value)) {
+    return value;
+  }
+
+  if (typeof value === "string") {
+    const parsedValue = Number(value);
+    return Number.isFinite(parsedValue) ? parsedValue : null;
+  }
+
+  return null;
+}
+
 // Keeps response parsing in one place so the main flow reads more clearly.
 function getCreatedSectionId(data: any): number | null {
-  return data?.section?.id
+  return (
+    readNumericId(data?.section?.id) ??
+    readNumericId(data?.sections?.id) ??
+    readNumericId(data?.data?.section?.id) ??
+    readNumericId(data?.data?.id) ??
+    readNumericId(data?.id)
+  );
 }
 
 // Same idea for lesson creation responses.
 function getCreatedLessonId(data: any): number | null {
-  return data?.lessons?.id 
+  return (
+    readNumericId(data?.lesson?.id) ??
+    readNumericId(data?.lessons?.id) ??
+    readNumericId(data?.data?.lesson?.id) ??
+    readNumericId(data?.data?.id) ??
+    readNumericId(data?.id)
+  );
 }
 
 export function CurriculumStep({
@@ -136,6 +161,62 @@ export function CurriculumStep({
     );
   };
 
+  const ensureSectionId = async (
+    localSectionId: string,
+    sectionIndex: number,
+    nextTitle?: string
+  ) => {
+    const currentSection = sections.find((section) => section.id === localSectionId);
+
+    if (!currentSection) {
+      toast.error("Section not found.");
+      return null;
+    }
+
+    if (currentSection.sectionId) {
+      return currentSection.sectionId;
+    }
+
+    const trimmedTitle = (nextTitle ?? currentSection.title).trim();
+
+    if (!trimmedTitle) {
+      toast.warning("Save the section title first before uploading lessons.");
+      return null;
+    }
+
+    if (!courseId) {
+      toast.warning("Create the course first so sections can be attached to it.");
+      return null;
+    }
+
+    if (!accessToken) {
+      toast.warning("You need to be logged in before creating sections.");
+      return null;
+    }
+
+    const data = await createSection({
+      courseId,
+      title: trimmedTitle,
+      position: sectionIndex + 1,
+      accessToken,
+    });
+
+    const createdSectionId = getCreatedSectionId(data);
+
+    if (!createdSectionId) {
+      toast.error("Section created, but the server did not return section id.");
+      return null;
+    }
+
+    updateSectionByLocalId(localSectionId, (section) => ({
+      ...section,
+      title: trimmedTitle,
+      sectionId: createdSectionId,
+    }));
+
+    return createdSectionId;
+  };
+
   const addSection = () => {
     onChange([...sections, createLocalSection()]);
   };
@@ -168,39 +249,13 @@ export function CurriculumStep({
       return;
     }
 
-    if (!courseId) {
-      toast.warning("Create the course first so sections can be attached to it.");
-      return;
-    }
-
-    if (!accessToken) {
-      toast.warning("You need to be logged in before creating sections.");
-      return;
-    }
-
-    const data = await createSection({
-      courseId,
-      title: trimmedTitle,
-      position: sectionIndex + 1,
-      accessToken,
-    });
-
-    const createdSectionId = getCreatedSectionId(data);
-
-    if (!createdSectionId) {
-      toast.error("Section created, but the server did not return section id.");
-      return;
-    }
-
-    updateSectionByLocalId(section.id, (currentSection) => ({
-      ...currentSection,
-      sectionId: Number(createdSectionId),
-    }));
+    await ensureSectionId(section.id, sectionIndex, trimmedTitle);
   };
 
   // Uploading a lesson requires a saved section id because the lesson endpoint is nested under a section.
   const handleVideoUpload = async (
     section: CurriculumSection,
+    sectionIndex: number,
     lessonPosition: number,
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -210,14 +265,15 @@ export function CurriculumStep({
       return;
     }
 
-    if (!section.sectionId) {
-      toast.warning("Save the section title first before uploading lessons.");
+    if (!accessToken) {
+      toast.warning("You need to be logged in before creating lessons.");
       event.target.value = "";
       return;
     }
 
-    if (!accessToken) {
-      toast.warning("You need to be logged in before creating lessons.");
+    const sectionId = await ensureSectionId(section.id, sectionIndex);
+
+    if (!sectionId) {
       event.target.value = "";
       return;
     }
@@ -225,13 +281,18 @@ export function CurriculumStep({
     const defaultLessonTitle = getFileNameWithoutExtension(file.name);
 
     const data = await createLesson({
-      sectionId: section.sectionId,
+      sectionId,
       title: defaultLessonTitle,
       is_free_preview: false,
       position: lessonPosition,
       video: file,
       accessToken,
     });
+
+    if (!data) {
+      event.target.value = "";
+      return;
+    }
 
     const lesson: CurriculumLesson = {
       id: createLocalId("lesson"),
@@ -406,7 +467,7 @@ export function CurriculumStep({
                     accept="video/*"
                     className="hidden"
                     onChange={(event) =>
-                      handleVideoUpload(section, section.lessons.length + 1, event)
+                      handleVideoUpload(section, index, section.lessons.length + 1, event)
                     }
                   />
                   <span className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-[#667085] text-[#667085]">

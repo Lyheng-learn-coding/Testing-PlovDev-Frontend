@@ -30,6 +30,7 @@ export const createSection = async ({
     };
     const res = await fetch(`${BASE_URL}/course/${courseId}/section`, {
       method: "POST",
+      credentials: "include",
       headers: {
         "Content-type": "application/json",
         Authorization: `Bearer ${accessToken}`,
@@ -49,5 +50,7 @@ export const createSection = async ({
     return data ?? [];
   } catch (error: any) {
     console.log(error.message);
+    toast.error("Failed to create section.");
+    return null;
   }
 };

@@ -39,9 +39,10 @@ export const createLesson = async ({
 
     const res = await fetch(`${BASE_URL}/section/${sectionId}/lesson`, {
       method: "POST",
-      headers: {
+      credentials: "include",
+      headers: accessToken? {
         Authorization: `Bearer ${accessToken}`,
-      },
+      } : undefined,
       body: formData,
     });
 
@@ -56,5 +57,7 @@ export const createLesson = async ({
     return data ?? [];
   } catch (error: any) {
     console.log(error.message);
+    toast.error("Failed to create lesson.");
+    return null;
   }
 };

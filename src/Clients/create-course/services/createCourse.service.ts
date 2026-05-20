@@ -6,7 +6,7 @@ const BASE_URL = `${API_URL}/api/v1`;
 interface CourseProps {
   title_en: string;
   description: string;
-  price: number;
+  price?: number;
   original_price?: number;
   what_you_learn?: string;
   category_id?: number;
@@ -25,7 +25,6 @@ export const createCourse = async ({
   accessToken,
 }: CourseProps) => {
   try {
-
     if (!title_en || !description || price === undefined || !what_you_learn) {
       toast.warning("Please fill all the required input fields!");
       return null;
@@ -76,6 +75,69 @@ export const viewCourse = async () => {
 
     console.log("Course data");
 
+    return data ?? [];
+  } catch (error: any) {
+    console.log(error.message);
+  }
+};
+
+// for updating course
+export type UpdateCourseProps = {
+  courseId: number;
+  title_en?: string;
+  description?: string;
+  what_you_learn?: string;
+  category_id?: number;
+  thumbnail?: File;
+  accessToken: string | null;
+};
+
+export const updateCourse = async ({
+  title_en,
+  description,
+  what_you_learn,
+  category_id,
+  thumbnail,
+  accessToken,
+  courseId,
+}: UpdateCourseProps) => {
+  try {
+
+    if (!title_en || !description  || !what_you_learn) {
+      toast.warning("Please fill all the required input fields!");
+      return null;
+    }
+
+    const formData = new FormData();
+    formData.append("title_en", title_en || "");
+    formData.append("description", description || "");
+    formData.append("what_you_learn", what_you_learn || "");
+    if (category_id) {
+      formData.append("category_id", category_id.toString());
+    }
+
+    if (thumbnail) {
+      formData.append("thumbnail", thumbnail);
+    }
+
+    const res = await fetch(`${BASE_URL}/courses/${courseId}`, {
+      method: "PUT",
+      headers: accessToken
+        ? {
+            Authorization: `Bearer ${accessToken}`,
+          }
+        : undefined,
+      body: formData,
+    });
+    const data = await res.json();
+
+    if (!res.ok) {
+      return toast.error(data.message || "something went wrong!");
+    }
+
+    console.log("Course create:", data);
+
+    toast.success("Course created successfully!");
     return data ?? [];
   } catch (error: any) {
     console.log(error.message);
