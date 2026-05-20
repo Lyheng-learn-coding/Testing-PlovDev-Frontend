@@ -1,34 +1,34 @@
+import type { CSSProperties } from "react";
+import { Outlet } from "react-router-dom";
+
 import { AppSidebar } from "@/components/app-sidebar";
-import { SiteHeader } from "@/components/site-header";
-import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 
 
 export default function DashboardLayout() {
   return (
-    <>
-      
-      <SidebarProvider
-        style={
-          {
-            "--sidebar-width": "calc(var(--spacing) * 72)",
-            "--header-height": "calc(var(--spacing) * 12)",
-          } as React.CSSProperties
-        }
-      >
-        <AppSidebar variant="inset" />
-        <SidebarInset>
-          <SiteHeader />
-          <div className="flex flex-1 flex-col">
-            <div className="@container/main flex flex-1 flex-col gap-2">
-              <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
-                <div className="px-4 lg:px-6">
-                  {/* your content */}
-                </div>
-              </div>
+    <SidebarProvider
+      style={
+        {
+          "--sidebar-width": "18rem",
+        } as CSSProperties
+      }
+    >
+      <AppSidebar variant="inset" />
+      <SidebarInset className="bg-[#fcfbf7]">
+        <header className="sticky top-0 z-30 flex items-center justify-between border-b border-[#ece8df] bg-[#fcfbf7]/95 px-4 py-3 backdrop-blur">
+          <div className="flex items-center gap-3">
+            <SidebarTrigger className="h-10 w-10 rounded-xl border border-[#ece8df] bg-white text-[#101828] shadow-none hover:bg-[#f8f7f3]" />
+            <div className="flex flex-col">
+              <span className="text-sm font-semibold text-[#101828]">PlovDev</span>
+              <span className="hidden text-xs text-[#667085] md:block">
+                Course creator workspace
+              </span>
             </div>
           </div>
-        </SidebarInset>
-      </SidebarProvider>
-    </>
+        </header>
+        <Outlet />
+      </SidebarInset>
+    </SidebarProvider>
   );
 }

@@ -7,19 +7,33 @@ import OTPPage from '../auth/pages/OtpPage'
 import ForgotPasswordPage from '../auth/pages/ForgotPassword'
 import ResetPassword from '../auth/pages/ResetPassword'
 import DashboardLayout from '@/layouts/DashboardLayout'
+import CreateCoursePage from '@/Clients/create-course/pages/CreateCoursePage'
+import MyCoursePage from '@/Clients/myCourse/pages/MyCoursePage'
+
+const publicRoutes = [
+  { path: 'homepage', element: <HomePage /> },
+  { path: 'coursepage', element: <CoursePage /> },
+]
+
+const teacherRoutes = [
+  { path: 'create-course', element: <CreateCoursePage /> },
+  { path: 'my-course', element: <MyCoursePage /> },
+]
 
 function AppRouter() {
   return (
     <Routes>
-
       <Route path="/" element={<Navbar />}>
-        <Route path="/homepage" element={<HomePage />} />
-        <Route path="/coursepage" element={<CoursePage />} />
+        {publicRoutes.map((route) => (
+          <Route key={route.path} path={route.path} element={route.element} />
+        ))}
       </Route>
 
-        <Route path="/teacher" element={<DashboardLayout />} >
-        
-       </Route>
+      <Route path="/teacher" element={<DashboardLayout />}>
+        {teacherRoutes.map((route) => (
+          <Route key={route.path} path={route.path} element={route.element} />
+        ))}
+      </Route>
 
       <Route path="/authpage" element={<AuthForm />} />
       <Route path="/otppage" element={<OTPPage />} />

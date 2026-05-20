@@ -1,5 +1,3 @@
-import Navbar from '../layouts/Navbar'
-
 function HomePage() {
   return (
     <>

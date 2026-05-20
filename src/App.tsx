@@ -1,13 +1,14 @@
 import { useEffect } from "react";
-import { BrowserRouter, useNavigate } from "react-router-dom";
+import { BrowserRouter } from "react-router-dom";
 import AppRouter from "./routes/AppRouter";
 import { handleRefreshToken } from "./auth/services/auth.service";
 import { AuthProvider, useAuth } from "./auth/context/AuthContext";
 import { TooltipProvider } from "./components/ui/tooltip";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const AppContent = () => {
-  const { accessToken, setAccessToken, setIsLoading } = useAuth();
-  const navigate = useNavigate();
+  const { setAccessToken, setIsLoading } = useAuth();
 
   useEffect(() => {
     const initAuth = async () => {
@@ -32,7 +33,7 @@ const AppContent = () => {
     };
 
     initAuth();
-  }, []);
+  }, [setAccessToken, setIsLoading]);
 
   return <AppRouter />;
 };
@@ -44,6 +45,7 @@ function App() {
         <AuthProvider>
         <TooltipProvider>
           <AppContent />
+          <ToastContainer position="top-right" autoClose={3000} />
         </TooltipProvider>
         </AuthProvider>
       </BrowserRouter>

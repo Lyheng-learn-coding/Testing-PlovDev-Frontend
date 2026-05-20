@@ -7,7 +7,6 @@ import {
 } from "../services/auth.service";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { ToastContainer } from "react-toastify";
 
 const AuthForm = () => {
   const navigate = useNavigate();
@@ -233,7 +232,6 @@ const AuthForm = () => {
           </div>
         </div>
       </div>
-      <ToastContainer position="top-right" />
     </>
   );
 };

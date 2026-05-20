@@ -56,7 +56,7 @@ export default function Navbar() {
 
         <div className="flex items-center gap-5">
           <div className="flex gap-5">
-            <Link className="text-[#cccccc] " to="/teacher">
+            <Link className="text-[#cccccc] " to="/teacher/create-course">
               Instructors
             </Link>
             <Link className="text-[#cccccc] " to="/student">

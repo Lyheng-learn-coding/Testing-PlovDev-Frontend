@@ -1,13 +1,11 @@
 import { useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { forgotPassword } from "../services/auth.service";
-import { useAuth } from "../context/AuthContext";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState<string>("");
   const navigate = useNavigate();
-  const location = useLocation();
 
   const handleSubmit = async () => {
     if (!email) {

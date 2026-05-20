@@ -1,12 +1,11 @@
 import { useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { ResetPasswordFunc } from "../services/auth.service";
 import { useAuth } from "../context/AuthContext";
 
 export default function ResetPassword() {
   const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
